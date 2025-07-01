@@ -1,22 +1,33 @@
 """
-主程序入口
-提供命令行界面和Web界面
+主程序入口 - 增强版
+提供智能命令行界面、实时监控、用户管理、性能分析
 """
 import asyncio
 import argparse
 import sys
-from typing import Optional
+import os
+import uuid
+import json
+import time
+import threading
+from typing import Optional, Dict, List, Any
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.prompt import Prompt, Confirm
-import json
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
+from rich.prompt import Prompt, Confirm, IntPrompt, FloatPrompt
+from rich.align import Align
+from rich.columns import Columns
+from datetime import datetime, timedelta
+from collections import defaultdict, deque
 
 from agent import SelfEvolvingAgent
 from config import config
 
 console = Console()
+
+class EnhancedAgentCLI:
+    """增强版Agent命令行界面"""
 
 class AgentCLI:
     """Agent命令行界面"""

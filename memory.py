@@ -1,32 +1,58 @@
 """
-记忆管理模块
-实现Agent的短期和长期记忆功能
+记忆管理模块 - 增强版
+实现Agent的短期和长期记忆功能，支持智能搜索、记忆压缩、情感关联
 """
 import sqlite3
 import json
 import time
-from typing import List, Dict, Any, Optional
+import logging
+import statistics
+import hashlib
+from typing import List, Dict, Any, Optional, Set, Tuple
 from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict
+from collections import defaultdict
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class Memory:
-    """记忆数据结构"""
+    """记忆数据结构 - 增强版"""
     id: Optional[int] = None
     content: str = ""
-    memory_type: str = "conversation"  # conversation, experience, knowledge
+    memory_type: str = "conversation"  # conversation, experience, knowledge, emotion, skill
     importance: float = 0.5  # 重要性评分 0-1
     timestamp: float = 0.0
     tags: Optional[List[str]] = None
     metadata: Optional[Dict[str, Any]] = None
     
+    # 增强字段
+    emotional_valence: float = 0.0  # 情感价值 -1到1
+    access_count: int = 0  # 访问次数
+    last_access: float = 0.0  # 最后访问时间
+    similarity_hash: str = ""  # 相似性哈希
+    compression_level: int = 0  # 压缩级别
+    linked_memories: Optional[List[int]] = None  # 关联记忆ID
+    
     def __post_init__(self):
         if self.timestamp == 0.0:
             self.timestamp = time.time()
+        if self.last_access == 0.0:
+            self.last_access = self.timestamp
         if self.tags is None:
             self.tags = []
         if self.metadata is None:
             self.metadata = {}
+        if self.linked_memories is None:
+            self.linked_memories = []
+        if not self.similarity_hash:
+            self.similarity_hash = self._generate_similarity_hash()
+    
+    def _generate_similarity_hash(self) -> str:
+        """生成相似性哈希"""
+        content_words = self.content.lower().split()[:10]  # 取前10个词
+        content_for_hash = " ".join(sorted(content_words))
+        return hashlib.md5(content_for_hash.encode()).hexdigest()[:8]
 
 class MemoryManager:
     """记忆管理器"""

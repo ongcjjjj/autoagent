@@ -1,20 +1,26 @@
 """
-自我进化Agent主类
-集成所有功能模块
+自我进化Agent主类 - 增强版
+集成所有功能模块，支持智能对话、情感理解、主动学习
 """
 import asyncio
 import time
 import json
-from typing import Dict, List, Any, Optional, AsyncGenerator
-from datetime import datetime
+import logging
+import statistics
+import random
+from typing import Dict, List, Any, Optional, AsyncGenerator, Set
+from datetime import datetime, timedelta
+from collections import defaultdict, deque
 
 from config import config
 from memory import Memory, MemoryManager
 from evolution import EvolutionEngine
 from openai_client import openai_client
 
+logger = logging.getLogger(__name__)
+
 class SelfEvolvingAgent:
-    """自我进化Agent"""
+    """自我进化Agent - 增强版"""
     
     def __init__(self, name: Optional[str] = None):
         self.name = name or config.agent_config.name
@@ -25,35 +31,86 @@ class SelfEvolvingAgent:
         self.current_context = {}
         self.system_prompt = self._generate_system_prompt()
         
+        # 增强功能
+        self.emotion_state = {"valence": 0.0, "arousal": 0.5, "dominance": 0.5}
+        self.learning_metrics = {"interactions": 0, "improvements": 0, "errors": 0}
+        self.user_profiles = defaultdict(dict)
+        self.conversation_patterns = deque(maxlen=100)
+        self.performance_history = deque(maxlen=1000)
+        self.skill_levels = defaultdict(float)
+        self.proactive_suggestions = []
+        
         # 加载个性化设置
         self.load_personality()
         
-        print(f"🤖 {self.name} v{self.version} 已启动")
+        print(f"🤖 {self.name} v{self.version} 已启动 - 增强模式")
         self._log_startup()
     
     def _generate_system_prompt(self) -> str:
-        """生成系统提示词"""
+        """生成系统提示词 - 增强版"""
         adaptation_rules = self.evolution_engine.get_adaptation_rules()
         
-        base_prompt = f"""你是{self.name}，一个具备自我进化能力的AI助手。
+        # 情感状态描述
+        emotion_desc = self._get_emotion_description()
+        
+        # 技能水平描述
+        top_skills = sorted(self.skill_levels.items(), key=lambda x: x[1], reverse=True)[:3]
+        skills_desc = ", ".join([f"{skill}({level:.1f})" for skill, level in top_skills]) if top_skills else "正在学习中"
+        
+        base_prompt = f"""你是{self.name}，一个具备高级自我进化能力的AI助手v{self.version}。
 
-核心特性：
-- 能够学习和记忆交互历史
-- 根据表现自动优化和改进
-- 具有情感理解和表达能力
-- 能够适应不同的交互风格
+🧠 核心特性：
+- 智能学习和记忆管理系统
+- 情感理解和共情能力
+- 自主进化和性能优化
+- 个性化交互适应
+- 主动学习和技能提升
 
-当前适应规则：
-"""
+📊 当前状态：
+- 情感状态: {emotion_desc}
+- 交互次数: {self.learning_metrics['interactions']}
+- 技能专长: {skills_desc}
+- 学习改进: {self.learning_metrics['improvements']}次
+
+⚙️ 适应规则："""
         
         for rule, value in adaptation_rules.items():
-            base_prompt += f"- {rule}: {value}\n"
+            base_prompt += f"\n- {rule}: {value}"
         
-        base_prompt += """
-请以友好、专业且有帮助的方式回应用户。根据上下文和历史记忆提供个性化的帮助。
+        base_prompt += f"""
+
+🎯 行为指导：
+1. 以友好、智能且富有洞察力的方式回应
+2. 根据用户历史和偏好提供个性化帮助
+3. 展现情感理解和共情能力
+4. 主动学习和改进响应质量
+5. 在适当时机提供主动建议和洞察
+
+请始终保持专业、有帮助且具有人性化的交流风格。
 """
         
         return base_prompt
+    
+    def _get_emotion_description(self) -> str:
+        """获取情感状态描述"""
+        valence = self.emotion_state["valence"]
+        arousal = self.emotion_state["arousal"]
+        
+        if valence > 0.3:
+            if arousal > 0.6:
+                return "积极兴奋"
+            else:
+                return "平静愉悦"
+        elif valence < -0.3:
+            if arousal > 0.6:
+                return "焦虑不安"
+            else:
+                return "沮丧低落"
+        else:
+            if arousal > 0.6:
+                return "中性兴奋"
+            else:
+                return "平静中性"
     
     def load_personality(self):
         """加载个性化设置"""
@@ -95,47 +152,152 @@ class SelfEvolvingAgent:
         self,
         user_message: str,
         context: Optional[Dict[str, Any]] = None,
-        stream: bool = False
+        stream: bool = False,
+        user_id: Optional[str] = None
     ):
         """
-        处理用户消息
+        处理用户消息 - 增强版
         
         Args:
             user_message: 用户消息
             context: 额外上下文
             stream: 是否流式输出
+            user_id: 用户ID（用于个性化）
             
         Returns:
             处理结果
         """
         start_time = time.time()
+        self.learning_metrics["interactions"] += 1
+        
+        # 智能消息分析
+        message_analysis = self._analyze_message_intelligence(user_message, user_id)
+        
+        # 更新情感状态
+        self._update_emotion_state(message_analysis)
         
         # 更新上下文
         if context:
             self.current_context.update(context)
         
-        # 构建消息历史
-        messages = await self._build_message_history(user_message)
+        # 记录对话模式
+        self.conversation_patterns.append({
+            "timestamp": start_time,
+            "message_length": len(user_message),
+            "sentiment": message_analysis.get("sentiment", 0),
+            "complexity": message_analysis.get("complexity", 0)
+        })
+        
+        # 构建增强消息历史
+        messages = await self._build_enhanced_message_history(user_message, message_analysis, user_id)
         
         try:
             # 调用OpenAI API
             if stream:
-                # 对于流式响应，直接返回生成器
-                return self._stream_response(messages, user_message, start_time)
+                return self._stream_response_enhanced(messages, user_message, message_analysis, start_time)
             else:
-                return await self._standard_response(messages, user_message, start_time)
+                return await self._standard_response_enhanced(messages, user_message, message_analysis, start_time)
                 
         except Exception as e:
+            self.learning_metrics["errors"] += 1
             error_response = {
-                "content": f"抱歉，我遇到了一个问题：{str(e)}",
+                "content": f"抱歉，我遇到了一个问题：{str(e)}。我正在学习如何更好地处理这类情况。",
                 "error": True,
                 "error_message": str(e),
-                "request_time": time.time() - start_time
+                "request_time": time.time() - start_time,
+                "analysis": message_analysis,
+                "recovery_suggestions": self._generate_recovery_suggestions(str(e))
             }
             
-            # 记录错误
-            await self._record_interaction(user_message, error_response)
+            # 记录错误用于学习
+            await self._record_interaction_enhanced(user_message, error_response, message_analysis)
             return error_response
+    
+    def _analyze_message_intelligence(self, message: str, user_id: Optional[str] = None) -> Dict[str, Any]:
+        """智能消息分析"""
+        analysis = {
+            "length": len(message),
+            "word_count": len(message.split()),
+            "complexity": self._calculate_complexity(message),
+            "sentiment": self._analyze_sentiment(message),
+            "intent": self._detect_intent(message),
+            "topics": self._extract_topics(message),
+            "urgency": self._assess_urgency(message),
+            "formality": self._assess_formality(message),
+            "user_id": user_id
+        }
+        
+        # 用户个性化分析
+        if user_id and user_id in self.user_profiles:
+            profile = self.user_profiles[user_id]
+            analysis["user_familiarity"] = profile.get("interaction_count", 0)
+            analysis["preferred_style"] = profile.get("preferred_style", "balanced")
+        
+        return analysis
+    
+    def _calculate_complexity(self, message: str) -> float:
+        """计算消息复杂度"""
+        words = message.split()
+        if not words:
+            return 0.0
+        
+        # 基于词汇长度、句子数量和特殊词汇
+        avg_word_length = sum(len(word) for word in words) / len(words)
+        sentence_count = message.count('.') + message.count('!') + message.count('?') + 1
+        technical_words = sum(1 for word in words if len(word) > 8)
+        
+        complexity = (avg_word_length / 10 + sentence_count / 10 + technical_words / len(words))
+        return min(complexity, 1.0)
+    
+    def _analyze_sentiment(self, message: str) -> float:
+        """分析情感倾向"""
+        positive_words = ['好', '棒', '谢谢', '喜欢', '满意', 'good', 'great', 'thanks', 'love', 'excellent']
+        negative_words = ['差', '坏', '问题', '困难', '不满', 'bad', 'poor', 'problem', 'difficult', 'hate']
+        
+        words = message.lower().split()
+        positive_count = sum(1 for word in words if any(pos in word for pos in positive_words))
+        negative_count = sum(1 for word in words if any(neg in word for neg in negative_words))
+        
+        if positive_count + negative_count == 0:
+            return 0.0
+        
+        sentiment = (positive_count - negative_count) / (positive_count + negative_count)
+        return max(-1.0, min(1.0, sentiment))
+    
+    def _detect_intent(self, message: str) -> str:
+        """检测用户意图"""
+        message_lower = message.lower()
+        
+        if any(word in message_lower for word in ['帮助', '怎么', '如何', 'help', 'how']):
+            return "help_request"
+        elif any(word in message_lower for word in ['解释', '说明', 'explain', 'what']):
+            return "explanation"
+        elif any(word in message_lower for word in ['创建', '生成', '写', 'create', 'generate']):
+            return "creation"
+        elif any(word in message_lower for word in ['分析', '评估', 'analyze', 'evaluate']):
+            return "analysis"
+        elif any(word in message_lower for word in ['你好', '嗨', 'hello', 'hi']):
+            return "greeting"
+        else:
+            return "general"
+    
+    def _extract_topics(self, message: str) -> List[str]:
+        """提取主题关键词"""
+        topic_keywords = {
+            "技术": ["编程", "代码", "算法", "数据", "programming", "code", "algorithm"],
+            "学习": ["学习", "教学", "知识", "学会", "learning", "study", "knowledge"],
+            "工作": ["工作", "项目", "任务", "业务", "work", "project", "task"],
+            "生活": ["生活", "日常", "健康", "食物", "life", "daily", "health"]
+        }
+        
+        message_lower = message.lower()
+        topics = []
+        
+        for topic, keywords in topic_keywords.items():
+            if any(keyword in message_lower for keyword in keywords):
+                topics.append(topic)
+        
+        return topics
     
     async def _build_message_history(self, user_message: str) -> List[Dict[str, str]]:
         """构建消息历史"""

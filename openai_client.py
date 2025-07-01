@@ -1,12 +1,16 @@
 """
-OpenAI API客户端模块
-封装OpenAI API调用功能
+OpenAI API客户端模块 - 增强版
+封装OpenAI API调用功能，支持智能重试、限流、性能监控、缓存
 """
 import asyncio
 import time
-from typing import List, Dict, Any, Optional, AsyncGenerator
+import hashlib
+import random
+from typing import List, Dict, Any, Optional, AsyncGenerator, Tuple
 import json
 import logging
+from collections import deque, defaultdict
+from datetime import datetime, timedelta
 from openai import AsyncOpenAI
 from config import config
 
@@ -15,10 +19,20 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class OpenAIClient:
-    """OpenAI API客户端"""
+    """OpenAI API客户端 - 增强版"""
     
     def __init__(self):
         self.client = None
+        
+        # 增强功能
+        self.request_history = deque(maxlen=1000)  # 请求历史
+        self.performance_metrics = defaultdict(list)  # 性能指标
+        self.rate_limiter = defaultdict(deque)  # 速率限制器
+        self.response_cache = {}  # 响应缓存
+        self.error_patterns = defaultdict(int)  # 错误模式统计
+        self.retry_backoff = 1.0  # 重试退避时间
+        self.last_request_time = 0.0  # 上次请求时间
+        
         self.init_client()
     
     def init_client(self):
