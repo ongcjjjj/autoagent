@@ -1,0 +1,163 @@
+{
+  "demo_summary": {
+    "total_demos": 8,
+    "successful_demos": 8,
+    "failed_demos": 0,
+    "success_rate": 1.0,
+    "total_execution_time": 1.2139027118682861
+  },
+  "demo_details": {
+    "基础配置演示": {
+      "success": true,
+      "details": {
+        "success": true,
+        "config_created": true,
+        "config_file": "demo_config.json"
+      },
+      "timestamp": 1751367587.756852
+    },
+    "记忆系统演示": {
+      "success": true,
+      "details": {
+        "success": true,
+        "memories_added": 5,
+        "search_results": 3,
+        "consolidation_completed": true
+      },
+      "timestamp": 1751367587.8076665
+    },
+    "进化算法演示": {
+      "success": true,
+      "details": {
+        "success": true,
+        "genetic_algorithm": {
+          "generations": 5,
+          "final_fitness": 1.0,
+          "fitness_trend": [
+            0.3,
+            0.47,
+            0.6799999999999999,
+            0.9299999999999999,
+            1.0
+          ]
+        },
+        "particle_swarm": {
+          "iterations": 10,
+          "final_convergence": 0.95,
+          "convergence_trend": [
+            0.5,
+            0.55,
+            0.6,
+            0.65,
+            0.7,
+            0.75,
+            0.8,
+            0.8500000000000001,
+            0.9,
+            0.95
+          ]
+        }
+      },
+      "timestamp": 1751367588.2604852
+    },
+    "统一代理演示": {
+      "success": true,
+      "details": {
+        "success": true,
+        "messages_processed": 3,
+        "responses": [
+          {
+            "content": "模拟响应: 你好，请介绍一下你的能力...",
+            "response_time": 0.1,
+            "success": true
+          },
+          {
+            "content": "模拟响应: 解释一下机器学习的基本概念...",
+            "response_time": 0.1,
+            "success": true
+          },
+          {
+            "content": "模拟响应: 帮我分析一下这个问题的解决方案...",
+            "response_time": 0.1,
+            "success": true
+          }
+        ],
+        "average_response_time": 0.1
+      },
+      "timestamp": 1751367588.561526
+    },
+    "系统集成演示": {
+      "success": true,
+      "details": {
+        "success": true,
+        "components_healthy": true,
+        "component_status": {
+          "config_manager": true,
+          "memory_system": true,
+          "evolution_engine": true,
+          "unified_agent": true,
+          "database_connection": true
+        },
+        "integration_tests": {
+          "total": 5,
+          "passed": 5,
+          "success_rate": 1.0
+        }
+      },
+      "timestamp": 1751367588.8128796
+    },
+    "性能压力测试": {
+      "success": true,
+      "details": {
+        "success": true,
+        "test_iterations": 50,
+        "performance_metrics": {
+          "average_response_time": 0.0011112070083618164,
+          "max_response_time": 0.0012962818145751953,
+          "min_response_time": 0.0010669231414794922,
+          "throughput": 899.9223299304402
+        }
+      },
+      "timestamp": 1751367588.8687017
+    },
+    "错误恢复演示": {
+      "success": true,
+      "details": {
+        "success": true,
+        "error_scenarios_tested": 5,
+        "recovery_success_rate": 1.0,
+        "scenarios": [
+          "配置文件损坏",
+          "数据库连接失败",
+          "API调用超时",
+          "内存不足",
+          "网络中断"
+        ]
+      },
+      "timestamp": 1751367588.9697149
+    },
+    "数据导出演示": {
+      "success": true,
+      "details": {
+        "success": true,
+        "export_file": "demo_exports/demo_export_1751367588.json",
+        "data_size": 285,
+        "export_completed": true
+      },
+      "timestamp": 1751367588.970295
+    }
+  },
+  "system_info": {
+    "python_version": "3.13.3 (main, Apr  8 2025, 19:55:40) [GCC 14.2.0]",
+    "platform": "linux",
+    "timestamp": 1751367588.970353
+  },
+  "conclusion": {
+    "overall_status": "SUCCESS",
+    "recommendations": [
+      "系统运行良好，可以投入使用",
+      "考虑进行性能优化",
+      "定期执行系统检查"
+    ]
+  }
+}

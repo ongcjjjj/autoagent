@@ -1,0 +1,116 @@
+{
+  "strategy_weights": {
+    "exploration": 0.23097484741333194,
+    "exploitation": 0.19231644203631199,
+    "balanced": 0.3472583112757905,
+    "adaptive": 0.22945039927456565
+  },
+  "adaptation_rules": {},
+  "learning_patterns": {},
+  "evolution_history": [
+    {
+      "strategy": "balanced",
+      "results": {
+        "genetic": {
+          "generation": 4,
+          "best_fitness": 0.9201468275651183,
+          "average_fitness": 0.2175629187873779,
+          "diversity": 0.391095804970702
+        },
+        "swarm": {
+          "best_fitness": 1.0,
+          "average_fitness": 1.0,
+          "swarm_diversity": 0.0
+        }
+      },
+      "execution_time": 0.003087282180786133,
+      "timestamp": 1751366955.0017147
+    },
+    {
+      "strategy": "adaptive",
+      "results": {
+        "genetic": {
+          "generation": 4,
+          "best_fitness": 0.9229753213893619,
+          "average_fitness": 0.2923484322669183,
+          "diversity": 0.43050179260430776
+        },
+        "swarm": {
+          "best_fitness": 1.0,
+          "average_fitness": 1.0,
+          "swarm_diversity": 0.0
+        }
+      },
+      "execution_time": 0.012050151824951172,
+      "timestamp": 1751366955.0149596
+    },
+    {
+      "strategy": "balanced",
+      "results": {
+        "genetic": {
+          "generation": 4,
+          "best_fitness": 0.9248066491649632,
+          "average_fitness": 0.2946258591265626,
+          "diversity": 0.4338552587375595
+        },
+        "swarm": {
+          "best_fitness": 1.0,
+          "average_fitness": 1.0,
+          "swarm_diversity": 0.0
+        }
+      },
+      "execution_time": 0.002984285354614258,
+      "timestamp": 1751366955.019048
+    },
+    {
+      "strategy": "balanced",
+      "results": {
+        "genetic": {
+          "generation": 5,
+          "best_fitness": 0.888686918299289,
+          "average_fitness": 0.3866990283214041,
+          "diversity": 0.44069976851536546
+        },
+        "swarm": {
+          "best_fitness": 1.0,
+          "average_fitness": 1.0,
+          "swarm_diversity": 0.0
+        }
+      },
+      "execution_time": 0.0033371448516845703,
+      "timestamp": 1751366970.3846922
+    },
+    {
+      "strategy": "balanced",
+      "results": {
+        "genetic": {
+          "generation": 6,
+          "best_fitness": 0.9021297486059684,
+          "average_fitness": 0.2129455942044867,
+          "diversity": 0.38279439940049714
+        },
+        "swarm": {
+          "best_fitness": 1.0,
+          "average_fitness": 1.0,
+          "swarm_diversity": 0.0
+        }
+      },
+      "execution_time": 0.0030639171600341797,
+      "timestamp": 1751366970.3891625
+    },
+    {
+      "strategy": "exploration",
+      "results": {
+        "genetic": {
+          "generation": 6,
+          "best_fitness": 0.9021297486059684,
+          "average_fitness": 0.28555427468472566,
+          "diversity": 0.42050227978766536
+        }
+      },
+      "execution_time": 0.0023980140686035156,
+      "timestamp": 1751366970.392711
+    }
+  ],
+  "timestamp": 1751366970.3927138
+}

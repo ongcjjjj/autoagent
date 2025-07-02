@@ -1,0 +1,68 @@
+{
+  "timestamp": 1751366970.3930542,
+  "total_execution_time": 0.08773350715637207,
+  "system_status": {
+    "population_size": 0,
+    "swarm_size": 0,
+    "strategy_weights": {
+      "exploration": 0.21836366299860296,
+      "exploitation": 0.21836366299860296,
+      "balanced": 0.3027456533717349,
+      "adaptive": 0.2605270206310592
+    },
+    "evolution_count": 3,
+    "performance_window_size": 0,
+    "database_path": "unified_evolution.db",
+    "has_numpy": false
+  },
+  "memory_demo": {
+    "added_memories": 3,
+    "search_results": 3,
+    "consolidation_completed": true
+  },
+  "genetic_demo": {
+    "generations_evolved": 5,
+    "final_best_fitness": 0.8762197750300115,
+    "final_average_fitness": 0.24424157989997924,
+    "diversity_trend": [
+      0.36242300816541195,
+      0.39793318977657904,
+      0.41174223013368133,
+      0.3916587544941856,
+      0.395635791214243
+    ]
+  },
+  "swarm_demo": {
+    "iterations_completed": 10,
+    "final_best_fitness": 1.0,
+    "final_diversity": 0.0,
+    "convergence_trend": [
+      0.690704144427711,
+      0.7229196578653438,
+      0.8137174822136627,
+      0.8697419412895461,
+      0.9358872390913079,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "adaptive_demo": {
+    "evolution_cycles": 3,
+    "strategies_used": [
+      "balanced",
+      "balanced",
+      "exploration"
+    ],
+    "total_execution_time": 0.008799076080322266,
+    "strategy_weights": {
+      "exploration": 0.23097484741333194,
+      "exploitation": 0.19231644203631199,
+      "balanced": 0.3472583112757905,
+      "adaptive": 0.22945039927456565
+    }
+  },
+  "integration_successful": true
+}
