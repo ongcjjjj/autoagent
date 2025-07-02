@@ -65,6 +65,26 @@ import os
 import json
 
 
+# 系统级配置常量
+MAX_MEMORY_SIZE: int = 100
+PERFORMANCE_HISTORY_SIZE: int = 50
+SUCCESS_PATTERN_LIMIT: int = 20
+OPTIMIZATION_THRESHOLD: float = 0.1
+COLLABORATION_TIMEOUT: float = 30.0
+
+# 评估权重配置
+EVALUATION_WEIGHTS = {
+    'trainability': 0.15,
+    'generalization': 0.15,
+    'expressiveness': 0.10,
+    'creativity_score': 0.15,
+    'adaptation_rate': 0.10,
+    'collaboration_efficiency': 0.15,
+    'error_recovery_rate': 0.10,
+    'knowledge_retention': 0.05,
+    'innovation_index': 0.05
+}
+
 # 日志配置
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -134,6 +154,41 @@ class EvaluationMetrics:
     error_recovery_rate: float = 0.0   # 错误恢复率
     knowledge_retention: float = 0.0   # 知识保持率
     innovation_index: float = 0.0      # 创新指数
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典格式"""
+        return {
+            'trainability': self.trainability,
+            'generalization': self.generalization,
+            'expressiveness': self.expressiveness,
+            'composite_score': self.composite_score,
+            'execution_time': self.execution_time,
+            'resource_usage': self.resource_usage,
+            'creativity_score': self.creativity_score,
+            'adaptation_rate': self.adaptation_rate,
+            'collaboration_efficiency': self.collaboration_efficiency,
+            'error_recovery_rate': self.error_recovery_rate,
+            'knowledge_retention': self.knowledge_retention,
+            'innovation_index': self.innovation_index
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'EvaluationMetrics':
+        """从字典创建实例"""
+        return cls(
+            trainability=data.get('trainability', 0.0),
+            generalization=data.get('generalization', 0.0),
+            expressiveness=data.get('expressiveness', 0.0),
+            composite_score=data.get('composite_score', 0.0),
+            execution_time=data.get('execution_time', 0.0),
+            resource_usage=data.get('resource_usage', {}),
+            creativity_score=data.get('creativity_score', 0.0),
+            adaptation_rate=data.get('adaptation_rate', 0.0),
+            collaboration_efficiency=data.get('collaboration_efficiency', 0.0),
+            error_recovery_rate=data.get('error_recovery_rate', 0.0),
+            knowledge_retention=data.get('knowledge_retention', 0.0),
+            innovation_index=data.get('innovation_index', 0.0)
+        )
 
 
 class CommunicationProtocol:
@@ -320,6 +375,52 @@ class AdvancedEvaluator:
         return min(recovery_rate, 1.0)
 
 
+class TrainingFreeEvaluator:
+    """训练无关评估器 - 无需训练即可评估模型性能"""
+    
+    def evaluate_trainability(self, model_params: Dict) -> float:
+        """评估模型可训练性"""
+        # 基于参数数量、梯度统计等评估
+        param_count = model_params.get('param_count', 1000)
+        gradient_norm = model_params.get('gradient_norm', 1.0)
+        learning_rate = model_params.get('learning_rate', 0.01)
+        
+        # 简化的可训练性评估
+        # 参数数量适中，梯度范数稳定，学习率合理时可训练性高
+        param_factor = min(1.0, np.log(param_count) / 10.0)
+        gradient_factor = 1.0 / (1.0 + gradient_norm)
+        lr_factor = min(1.0, learning_rate * 10)
+        
+        trainability = (param_factor * 0.4 + gradient_factor * 0.4 + lr_factor * 0.2)
+        return max(0.1, min(trainability, 1.0))
+    
+    def evaluate_generalization(self, model_complexity: float) -> float:
+        """评估泛化能力"""
+        # 基于模型复杂度评估泛化能力
+        # 复杂度适中时泛化能力最好
+        if model_complexity < 0.3:
+            return 0.6 + model_complexity  # 复杂度太低，表达能力不足
+        elif model_complexity > 0.8:
+            return 1.4 - model_complexity  # 复杂度太高，容易过拟合
+        else:
+            return 0.8 + 0.2 * (1 - abs(model_complexity - 0.55) / 0.25)
+    
+    def evaluate_expressiveness(self, architecture_info: Dict) -> float:
+        """评估表达能力"""
+        # 基于架构信息评估表达能力
+        layer_count = architecture_info.get('layer_count', 3)
+        parameter_diversity = architecture_info.get('parameter_diversity', 0.5)
+        activation_types = architecture_info.get('activation_types', 1)
+        
+        # 层数、参数多样性、激活函数类型影响表达能力
+        layer_factor = min(1.0, layer_count / 10.0)
+        diversity_factor = parameter_diversity
+        activation_factor = min(1.0, activation_types / 5.0)
+        
+        expressiveness = (layer_factor * 0.4 + diversity_factor * 0.4 + activation_factor * 0.2)
+        return max(0.1, min(expressiveness, 1.0))
+
+
 class BaseAgent(ABC):
     """基础Agent抽象类"""
     
@@ -432,10 +533,10 @@ class BaseAgent(ABC):
         self.memory.append(memory)
         
         # 保持记忆数量限制
-        if len(self.memory) > 1000:
+        if len(self.memory) > MAX_MEMORY_SIZE:
             # 移除重要性最低的记忆
             self.memory.sort(key=lambda m: m.importance)
-            self.memory = self.memory[100:]
+            self.memory = self.memory[20:]
     
     def get_relevant_memories(self, context: Dict[str, Any], limit: int = 5) -> List[AgentMemory]:
         """获取相关记忆"""
@@ -454,6 +555,63 @@ class BaseAgent(ABC):
         )
         
         return relevant_memories[:limit]
+    
+    def add_memory(self, content: Any, importance: float = 0.5) -> None:
+        """添加记忆到Agent的记忆系统"""
+        memory = AgentMemory(
+            content=content,
+            importance=importance,
+            memory_type="manual_add",
+            timestamp=datetime.now()
+        )
+        self.memory.append(memory)
+        
+        # 保持记忆数量限制
+        if len(self.memory) > MAX_MEMORY_SIZE:
+            self.memory.sort(key=lambda m: m.importance)
+            self.memory = self.memory[20:]  # 保留重要性最高的记忆
+    
+    def learn_from_success(self, action: AgentAction) -> None:
+        """从成功行动中学习"""
+        if action.success and action.metadata.get('output_score', 0) > 0.7:
+            success_pattern = {
+                'action_type': action.action_type,
+                'content_signature': str(hash(str(action.content))),
+                'parameters': {
+                    'temperature': self.temperature,
+                    'learning_rate': self.learning_rate,
+                    'exploration_rate': self.exploration_rate,
+                    'adaptation_speed': self.adaptation_speed
+                },
+                'success_score': action.metadata.get('output_score', 0),
+                'timestamp': datetime.now()
+            }
+            self.success_patterns.append(success_pattern)
+            
+            # 保持成功模式数量限制
+            if len(self.success_patterns) > SUCCESS_PATTERN_LIMIT:
+                self.success_patterns = self.success_patterns[-15:]
+    
+    def record_performance(self, metrics: Any) -> None:
+        """记录性能指标"""
+        performance_record = {
+            'timestamp': datetime.now(),
+            'metrics': metrics,
+            'agent_state': {
+                'memory_size': len(self.memory),
+                'action_count': len(self.action_history),
+                'optimization_count': self.optimization_counter,
+                'success_patterns': len(self.success_patterns)
+            }
+        }
+        
+        # 如果metrics是EvaluationMetrics对象，添加到performance_metrics列表
+        if isinstance(metrics, EvaluationMetrics):
+            self.performance_metrics.append(metrics)
+        
+        # 保持性能历史记录数量限制
+        if len(self.performance_metrics) > PERFORMANCE_HISTORY_SIZE:
+            self.performance_metrics = self.performance_metrics[-30:]
     
     async def self_evaluate(self) -> EvaluationMetrics:
         """高级自我评估 - 全面评估Agent性能"""
@@ -634,7 +792,7 @@ class BaseAgent(ABC):
             self.success_patterns.append(success_pattern)
             
             # 保持成功模式数量限制
-            if len(self.success_patterns) > 20:
+            if len(self.success_patterns) > SUCCESS_PATTERN_LIMIT:
                 self.success_patterns = self.success_patterns[-15:]
         
         # 记录改进行动
