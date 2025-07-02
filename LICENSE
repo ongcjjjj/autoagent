@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2025 kevin matthew
+Copyright (c) 2024 Autonomous Evolutionary Agent System
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,28 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+================================================================================
+
+Additional Terms for Autonomous Evolutionary Agent System:
+
+1. RESEARCH AND EDUCATION USE: This software is primarily intended for research
+   and educational purposes. Commercial use is permitted under this license.
+
+2. ATTRIBUTION: When using this software in research publications, please cite:
+   "Autonomous Evolutionary Agent System - A Multi-Agent Framework for 
+   Self-Improving AI Systems"
+
+3. SAFETY CONSIDERATIONS: Users are responsible for ensuring safe and ethical
+   use of autonomous AI systems. The authors recommend implementing appropriate
+   safety measures and human oversight.
+
+4. MODIFICATIONS: Derivative works must clearly indicate modifications made to
+   the original software and maintain this license notice.
+
+5. NO WARRANTY: This software is provided for research purposes. The authors
+   make no warranties about its fitness for production use or safety in 
+   autonomous applications.
+
+For questions about licensing or commercial use, please contact the project
+maintainers.
